@@ -4,8 +4,11 @@ import pool from "../db";
 const keyRouter: any = Router()
 
 
+
+
 keyRouter.get('/:key', async (req: any, res: any) => {
     try {
+        
         const key = req.params.key
 
         if (key == 1) {
@@ -23,8 +26,10 @@ keyRouter.get('/:key', async (req: any, res: any) => {
         }
 
 
+
     } catch (error) {
             res.status(400).json({message: 'ошибка', error})
+
     }
 })
 
