@@ -12,6 +12,12 @@ import cors, { CorsOptions } from "cors";
 dotenv.config();
 
 const app = express();
+app.use(cors())
+app.use(express.json());
+app.use('/keys', keyRouter)
+app.use('/logs', LogsRouter)
+
+
 
 const apiKey = process.env.API_KEY;
 const port = process.env.PORT || 5000;
@@ -27,24 +33,12 @@ const configuration = new Configuration({ apiKey });
 const openai = new OpenAIApi(configuration);
 
 const server = http.createServer(app);
-const io = new Server(server, {
-  cors: {
+const io = new Server(server, {cors: {
     origin: "*",
-  } as CorsOptions,
-});
+  } as CorsOptions});
 
 
 try {
-  app.use(express.json());
-
-  app.use('/keys', keyRouter)
-  app.use('/logs', LogsRouter)
-
-  app.use(
-    cors({
-      origin: "*",
-    })
-  );
 
   server.listen(port, () => console.log(`started at: ${port}`));
 
