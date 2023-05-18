@@ -94,12 +94,8 @@ try {
             role: "assistant",
           });
 
-<<<<<<< HEAD
-=======
           console.log(isFinished);
           console.log(messages_arr);
-
->>>>>>> 24baf87cd85daa446976e65ad7a7738fced6b940
         } catch (error) {
 
           res = await openai_key_2.createChatCompletion({
