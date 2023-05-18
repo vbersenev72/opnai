@@ -73,8 +73,13 @@ try {
             max_tokens: 20,
           });
 
-          const answer: string = res.data.choices[0].message.content;
+          let answer: any = res.data.choices[0].message.content;
           isFinished = res?.data?.choices[0]?.finish_reason === "stop";
+
+        if (answer.match(/^[a-zA-Z]/)) {
+          answer = ` ${answer}`;
+        }
+
 
           socket.emit("chat message", {
             message: answer,
@@ -87,7 +92,6 @@ try {
           });
 
           console.log(isFinished);
-          console.log(messages_arr);
         } catch (error) {
 
           res = await openai_key_2.createChatCompletion({
