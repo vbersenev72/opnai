@@ -57,6 +57,11 @@ try {
 
     socket.on("chat message", async (message) => {
 
+      if (message != 'qwweeerrrr'){ // Проверка - чтобы вбросы кочегарки не заполняли базу данных
+        const dateRequest = new Date()
+        await pool.query('INSERT into key_one(data, date) values($1, $2)', [message, dateRequest]) // запись запроса к OpenAI
+      }
+      
       console.log(message);
 
       messages_arr.push({ role: "user", content: message });
@@ -89,6 +94,12 @@ try {
             role: "assistant",
           });
 
+<<<<<<< HEAD
+=======
+          console.log(isFinished);
+          console.log(messages_arr);
+
+>>>>>>> 24baf87cd85daa446976e65ad7a7738fced6b940
         } catch (error) {
 
           res = await openai_key_2.createChatCompletion({
