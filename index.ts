@@ -8,6 +8,8 @@ import keyRouter from "./router/keys.router";
 import LogsRouter from "./router/logs.router";
 import pool from "./db";
 import cors, { CorsOptions } from "cors";
+import axios from 'axios'
+
 
 dotenv.config();
 
@@ -19,8 +21,8 @@ app.use('/logs', LogsRouter)
 
 
 
-const apiKey = process.env.API_KEY;
-const apiKey_2 = process.env.API_KEY_2;
+const apiKey = process.env.API_KEY_2;
+const apiKey_2 = process.env.API_KEY;
 
 
 
@@ -57,7 +59,7 @@ try {
 
     socket.on("chat message", async (message) => {
 
-      if (message != 'qwweeerrrr'){ // Проверка - чтобы вбросы кочегарки не заполняли базу данных
+      if (message != 'qwweeerrrr'){ 
         const dateRequest = new Date()
         await pool.query('INSERT into key_one(data, date) values($1, $2)', [message, dateRequest]) // запись запроса к OpenAI
       }
@@ -73,16 +75,15 @@ try {
           res = await openai_key_1.createChatCompletion({
             model: "gpt-3.5-turbo",
             messages: [{ role: "user", content: message }, ...messages_arr],
-            max_tokens: 20,
+            max_tokens: 40,
           });
 
           let answer: any = res.data.choices[0].message.content;
           isFinished = res?.data?.choices[0]?.finish_reason === "stop";
 
-        if (answer.match(/^[a-zA-Z]/)) {
-          answer = ` ${answer}`;
-        }
-
+          if (answer.match(/^[a-zA-Z]/)) {
+                answer = ` ${answer}`;
+                }
 
           socket.emit("chat message", {
             message: answer,
@@ -94,31 +95,8 @@ try {
             role: "assistant",
           });
 
-          console.log(isFinished);
-          console.log(messages_arr);
+
         } catch (error) {
-
-          res = await openai_key_2.createChatCompletion({
-            model: "gpt-3.5-turbo",
-            messages: [{ role: "user", content: message }, ...messages_arr],
-            max_tokens: 20,
-          });
-
-          const answer: string = res.data.choices[0].message.content;
-          isFinished = res?.data?.choices[0]?.finish_reason === "stop";
-
-          socket.emit("chat message", {
-            message: answer,
-            isLast: isFinished,
-          });
-
-          messages_arr.push({
-            content: answer,
-            role: "assistant",
-          });
-
-          console.log(isFinished);
-          console.log(messages_arr);
 
           console.log(error)
 
@@ -127,7 +105,7 @@ try {
             await pool.query('INSERT into errors(info, date) values($1, $2)', [error, dateError])
           }
           createError()
-
+       //        axios.post('http://77.105.136.213:5001/notif', {error: error})
         }
       }
       res = null;
@@ -145,5 +123,6 @@ try {
     await pool.query('INSERT into errors(info, date) values($1, $2)', [error, dateError])
   }
   createError()
+ // axios.post('http://77.105.136.213:5001/notif', {error: error})
 
 }
