@@ -9,6 +9,7 @@ import LogsRouter from "./router/logs.router";
 import pool from "./db";
 import cors, { CorsOptions } from "cors";
 import axios from 'axios'
+import RequestRouter from "./router/request.router";
 
 
 dotenv.config();
@@ -18,6 +19,7 @@ app.use(cors())
 app.use(express.json());
 app.use('/keys', keyRouter)
 app.use('/logs', LogsRouter)
+app.use('/data', RequestRouter)
 
 
 
@@ -59,11 +61,6 @@ try {
 
     socket.on("chat message", async (message) => {
 
-      if (message != 'qwweeerrrr'){ 
-        const dateRequest = new Date()
-        await pool.query('INSERT into key_one(data, date) values($1, $2)', [message, dateRequest]) // запись запроса к OpenAI
-      }
-      
       console.log(message);
 
       messages_arr.push({ role: "user", content: message });
@@ -101,11 +98,10 @@ try {
           console.log(error)
 
           const createError = async ( ) => {
-            const dateError = new Date()
-            await pool.query('INSERT into errors(info, date) values($1, $2)', [error, dateError])
+            await axios.post('http://77.105.136.213:5000/data/send_error', {data: error})
+            await axios.post('http://77.105.136.213:5001/notif', {error: error})
           }
           createError()
-       //        axios.post('http://77.105.136.213:5001/notif', {error: error})
         }
       }
       res = null;
@@ -119,10 +115,10 @@ try {
   console.log(error);
 
   const createError = async ( ) => {
-    const dateError = new Date()
-    await pool.query('INSERT into errors(info, date) values($1, $2)', [error, dateError])
+    await axios.post('http://77.105.136.213:5000/data/send_error', {data: error})
+    await axios.post('http://77.105.136.213:5001/notif', {error: error})
   }
   createError()
- // axios.post('http://77.105.136.213:5001/notif', {error: error})
+
 
 }
