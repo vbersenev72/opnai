@@ -34,5 +34,21 @@ keyRouter.get('/:key', async (req: any, res: any) => {
 })
 
 
+keyRouter.post('/getbydate', async (req:any, res:any) => {
+    try {
+
+        let {start_date, end_date} = req.body
+
+
+        const result = await pool.query('SELECT * FROM key_one WHERE date::date >= $1 AND date::date <= $2;', [start_date, end_date])
+        res.json({message: result.rows})
+
+
+    } catch (error) {
+        res.status(400).json({message: 'error', error})
+    }
+})
+
+
 
 export default keyRouter as any
