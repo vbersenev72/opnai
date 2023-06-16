@@ -41,6 +41,26 @@ keyRouter.post('/getbydate', async (req:any, res:any) => {
 
 
         const result = await pool.query('SELECT * FROM key_one WHERE date::date >= $1 AND date::date <= $2;', [start_date, end_date])
+        // let resulterrors:any = await pool.query('SELECT * FROM errors WHERE date::date >= $1 AND date::date <= $2;', [start_date, end_date])
+        // resulterrors = resulterrors.rows
+
+        res.json({message: result.rows})
+
+
+    } catch (error) {
+        res.status(400).json({message: 'error', error})
+    }
+})
+
+
+keyRouter.post('/getbydate_errors', async (req:any, res:any) => {
+    try {
+
+        let {start_date, end_date} = req.body
+
+
+        let result:any = await pool.query('SELECT * FROM errors WHERE date::date >= $1 AND date::date <= $2;', [start_date, end_date])
+
         res.json({message: result.rows})
 
 
