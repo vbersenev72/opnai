@@ -70,7 +70,7 @@ try {
       while (res === null || !isFinished) {
         try {
           res = await openai_key_1.createChatCompletion({
-            model: "gpt-3.5-turbo",
+            model: "gpt-3.5-turbo-16k",
             messages: [{ role: "user", content: message }, ...messages_arr],
             max_tokens: 40,
           });
