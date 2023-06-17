@@ -6,7 +6,7 @@ const RequestRouter: any = Router()
 
 RequestRouter.post('/send_data', async (req: any, res: any) => {
     try {
-        const { user_id, request, response, time, model, platform, version, isSubscribe } = req.body
+        const { user_id, request, response, time, model, platform, version, isSubscribed } = req.body
 
         const dateRequest = new Date()
         await pool.query('INSERT into key_one(data, date, user_id, response, time, model, platform, version, is_subscribe) values($1, $2, $3, $4, $5, $6, $7, $8, $9)', [request, dateRequest, user_id, response, time, model, platform, version, isSubscribe]) // запись запроса к OpenAI
