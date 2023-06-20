@@ -29,14 +29,14 @@ const apiKey_2 = process.env.API_KEY;
 
 
 const port = process.env.PORT || 5000;
-const serviceAccountKey = JSON.parse(process.env.SERVICE_ACCOUNT_KEY || "");
+// const serviceAccountKey = JSON.parse(process.env.SERVICE_ACCOUNT_KEY || "");
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccountKey),
-  databaseURL: "https://ai-chat-db677.firebaseio.com",
-});
+// admin.initializeApp({
+//   credential: admin.credential.cert(serviceAccountKey),
+//   databaseURL: "https://ai-chat-db677.firebaseio.com",
+// });
 
-const db = admin.firestore();
+// const db = admin.firestore();
 
 const configuration_key_1 = new Configuration({ apiKey: apiKey }); // конфиги для первого ключа
 const openai_key_1 = new OpenAIApi(configuration_key_1);

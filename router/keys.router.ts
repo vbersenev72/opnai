@@ -1,10 +1,21 @@
 import { Router } from "express";
 import pool from "../db";
+import admin from "firebase-admin";
+import dotenv from "dotenv";
+
+dotenv.config()
 
 const keyRouter: any = Router()
 
+const serviceAccountKey = JSON.parse(process.env.SERVICE_ACCOUNT_KEY || "");
 
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccountKey),
+  databaseURL: "https://ai-chat-db677.firebaseio.com",
+});
 
+const db = admin.firestore();
+const MessagesCollection:any = db.collection('Messages')
 
 keyRouter.get('/:key', async (req: any, res: any) => {
     try {
@@ -41,16 +52,39 @@ keyRouter.post('/getbydate', async (req:any, res:any) => {
 
 
         const result = await pool.query('SELECT * FROM key_one WHERE date::date >= $1 AND date::date <= $2;', [start_date, end_date])
-        // let resulterrors:any = await pool.query('SELECT * FROM errors WHERE date::date >= $1 AND date::date <= $2;', [start_date, end_date])
-        // resulterrors = resulterrors.rows
+
 
         res.json({message: result.rows})
 
 
+
     } catch (error) {
         res.status(400).json({message: 'error', error})
+        console.log(error);
+
     }
 })
+
+
+keyRouter.post('/get_firestore', async (req:any, res:any) => {
+    try {
+
+        let docs:any = []
+        MessagesCollection.get().then(function(querySnapshot:any) {
+            querySnapshot.forEach(function(doc:any) {
+                docs.push(doc.data())
+            });
+            res.json({message: docs})
+          });
+
+
+    } catch (error) {
+        res.status(400).json({message: 'error', error})
+        console.log(error);
+
+    }
+})
+
 
 
 keyRouter.post('/getbydate_errors', async (req:any, res:any) => {
