@@ -110,6 +110,63 @@ try {
         console.log("Client disconnected");
       });
     });
+
+    socket.on('free message', async (message) => {
+      console.log(message);
+
+      messages_arr.push({ role: "user", content: message });
+
+      let isFinished: boolean = res?.data?.choices[0]?.finish_reason === "stop";
+
+      for(let i = 0; i < 10; i++) {
+        try {
+          res = await openai_key_1.createChatCompletion({
+            model: "gpt-3.5-turbo-16k",
+            messages: [{ role: "user", content: message }, ...messages_arr],
+            max_tokens: 50,
+          });
+
+          let answer: any = res.data.choices[0].message.content;
+          isFinished = res?.data?.choices[0]?.finish_reason === "stop";
+
+          if (answer.match(/^[a-zA-Zа-яА-Я]/)) {
+                answer = ` ${answer}`;
+              }
+
+          if (i == 9) {
+                isFinished = true
+              }
+
+          socket.emit("free message", {
+            message: answer,
+            isLast: isFinished,
+          });
+
+          messages_arr.push({
+            content: answer,
+            role: "assistant",
+          });
+
+
+        } catch (error) {
+
+          console.log(error)
+
+          const createError = async ( ) => {
+            await axios.post('http://77.105.136.213:5000/data/send_error', {data: error})
+            await axios.post('http://77.105.136.213:5001/notif', {error: error})
+          }
+          createError()
+        }
+      }
+      res = null;
+
+      socket.on("disconnect", () => {
+        console.log("Client disconnected");
+      });
+    })
+
+
   });
 } catch (error) {
   console.log(error);
