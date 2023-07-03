@@ -1,3 +1,8 @@
-/node_modules
+node_modules/
+dist/
+.env
+.idea
+.vscode
 /ai-chat-db677-firebase-adminsdk-c8aj4-e8f2a5f841.json
-*.env
+.env
+.DS_Store

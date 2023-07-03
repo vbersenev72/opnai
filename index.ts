@@ -1,7 +1,7 @@
 import http from "http";
 import dotenv from "dotenv";
 import express from "express";
-import admin from "firebase-admin";
+// import admin from "firebase-admin";
 import { Server } from "socket.io";
 import { Configuration, OpenAIApi } from "openai";
 import keyRouter from "./router/keys.router";
@@ -99,7 +99,7 @@ try {
 
           const createError = async ( ) => {
             await axios.post('http://77.105.136.213:5000/data/send_error', {data: error})
-            await axios.post('http://77.105.136.213:5001/notif', {error: error.toString()})
+            await axios.post('http://77.105.136.213:5001/notif', {error: error})
           }
           createError()
         }
@@ -154,7 +154,7 @@ try {
 
           const createError = async ( ) => {
             await axios.post('http://77.105.136.213:5000/data/send_error', {data: error})
-            await axios.post('http://77.105.136.213:5001/notif', {error: error.toString()})
+            await axios.post('http://77.105.136.213:5001/notif', {error: error})
           }
           createError()
         }
@@ -173,7 +173,7 @@ try {
 
   const createError = async ( ) => {
     await axios.post('http://77.105.136.213:5000/data/send_error', {data: error})
-    await axios.post('http://77.105.136.213:5001/notif', {error: error.toString()})
+    await axios.post('http://77.105.136.213:5001/notif', {error: error})
   }
   createError()
 
