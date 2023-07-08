@@ -146,7 +146,7 @@ try {
             content: answer,
             role: "assistant",
           });
-
+          if (isFinished || res !== null) break;
 
         } catch (error) {
 
