@@ -99,7 +99,7 @@ try {
 
           const createError = async ( ) => {
             await axios.post('http://77.105.136.213:5000/data/send_error', {data: error})
-            await axios.post('http://77.105.136.213:5001/notif', {error: error})
+            await axios.post('http://77.105.136.213:6000/notif', {error: error})
           }
           createError()
         }
@@ -154,7 +154,7 @@ try {
 
           const createError = async ( ) => {
             await axios.post('http://77.105.136.213:5000/data/send_error', {data: error})
-            await axios.post('http://77.105.136.213:5001/notif', {error: error})
+            await axios.post('http://77.105.136.213:6000/notif', {error: error})
           }
           createError()
         }
@@ -173,7 +173,7 @@ try {
 
   const createError = async ( ) => {
     await axios.post('http://77.105.136.213:5000/data/send_error', {data: error})
-    await axios.post('http://77.105.136.213:5001/notif', {error: error})
+    await axios.post('http://77.105.136.213:6000/notif', {error: error})
   }
   createError()
 
