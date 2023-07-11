@@ -133,6 +133,7 @@ try {
                 answer = ` ${answer}`;
               }
 
+
           if (i == 9) {
                 isFinished = true
               }
@@ -146,7 +147,7 @@ try {
             content: answer,
             role: "assistant",
           });
-
+          if (isFinished) break;
 
         } catch (error) {
 

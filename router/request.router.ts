@@ -60,7 +60,7 @@ RequestRouter.post("/send_error", async (req: any, res: any) => {
 
 RequestRouter.get("/messages", async (req: any, res: any) => {
   try {
-    const { start_date, end_date } = req.body;
+    const { start_date, end_date } = req.query;
     const snapshot = await db.collection("Messages").get();
 
     const data: { [key: string]: string }[] = snapshot.docs
