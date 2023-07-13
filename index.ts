@@ -123,7 +123,7 @@ try {
           let answer: any = res.data.choices[0].message.content;
           isFinished = res?.data?.choices[0]?.finish_reason === "stop";
 
-          if (answer.match(/^[a-zA-Zа-яА-Я]/)) answer = ` ${answer}`;
+          if (answer.match(/^[a-zA-Zа-яА-Я]/) && !/[а-яА-ЯЁёЪъ]/.test(answer)) answer = ` ${answer}`;
     
           if (/[а-яА-ЯЁёЪъ]/.test(answer)) count = 4;
           // console.log(answer.length, count);
