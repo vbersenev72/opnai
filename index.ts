@@ -123,14 +123,11 @@ try {
           let answer: any = res.data.choices[0].message.content;
           isFinished = res?.data?.choices[0]?.finish_reason === "stop";
 
-          if (answer.match(/^[a-zA-Zа-яА-Я]/)) {
-            answer = ` ${answer}`;
-          }
-          if (/[а-яА-ЯЁёЪъ]/.test(answer)) count = 3;
+          if (answer.match(/^[a-zA-Zа-яА-Я]/)) answer = ` ${answer}`;
+    
+          if (/[а-яА-ЯЁёЪъ]/.test(answer)) count = 4;
           // console.log(answer.length, count);
-          if (i === count) {
-            isFinished = true;
-          }
+          if (i === count) isFinished = true;
 
           socket.emit("free message", {
             message: answer,
@@ -156,6 +153,8 @@ try {
           createError();
         }
       }
+      // console.log(messages_arr);
+      
       res = null;
 
       socket.on("disconnect", () => {
