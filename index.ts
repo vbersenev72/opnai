@@ -132,9 +132,9 @@ try {
           if (answer.match(/^[a-zA-Zа-яА-Я]/)) {
                 answer = ` ${answer}`;
               }
+              // console.log(answer.length);
 
-
-          if (i == 9) {
+          if (i == 1) {
                 isFinished = true
               }
 
