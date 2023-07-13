@@ -8,25 +8,20 @@ import keyRouter from "./router/keys.router";
 import LogsRouter from "./router/logs.router";
 import pool from "./db";
 import cors, { CorsOptions } from "cors";
-import axios from 'axios'
+import axios from "axios";
 import RequestRouter from "./router/request.router";
-
 
 dotenv.config();
 
 const app = express();
-app.use(cors())
+app.use(cors());
 app.use(express.json());
-app.use('/keys', keyRouter)
-app.use('/logs', LogsRouter)
-app.use('/data', RequestRouter)
-
-
+app.use("/keys", keyRouter);
+app.use("/logs", LogsRouter);
+app.use("/data", RequestRouter);
 
 const apiKey = process.env.API_KEY_2;
 const apiKey_2 = process.env.API_KEY;
-
-
 
 const port = process.env.PORT || 5000;
 // const serviceAccountKey = JSON.parse(process.env.SERVICE_ACCOUNT_KEY || "");
@@ -44,15 +39,14 @@ const openai_key_1 = new OpenAIApi(configuration_key_1);
 const configuration_key_2 = new Configuration({ apiKey: apiKey_2 }); // конфиги для второго ключа
 const openai_key_2 = new OpenAIApi(configuration_key_2);
 
-
 const server = http.createServer(app);
-const io = new Server(server, {cors: {
+const io = new Server(server, {
+  cors: {
     origin: "*",
-  } as CorsOptions});
-
+  } as CorsOptions,
+});
 
 try {
-
   server.listen(port, () => console.log(`started at: ${port}`));
 
   io.on("connection", (socket) => {
@@ -60,7 +54,6 @@ try {
     let messages_arr: any = [];
 
     socket.on("chat message", async (message) => {
-
       console.log(message);
 
       messages_arr.push({ role: "user", content: message });
@@ -79,8 +72,8 @@ try {
           isFinished = res?.data?.choices[0]?.finish_reason === "stop";
 
           if (answer.match(/^[a-zA-Z]/)) {
-                answer = ` ${answer}`;
-                }
+            answer = ` ${answer}`;
+          }
 
           socket.emit("chat message", {
             message: answer,
@@ -91,17 +84,18 @@ try {
             content: answer,
             role: "assistant",
           });
-
-
         } catch (error) {
+          console.log(error);
 
-          console.log(error)
-
-          const createError = async ( ) => {
-            await axios.post('http://77.105.136.213:5000/data/send_error', {data: error})
-            await axios.post('http://77.105.136.213:6000/notif', {error: error})
-          }
-          createError()
+          const createError = async () => {
+            await axios.post("http://77.105.136.213:5000/data/send_error", {
+              data: error,
+            });
+            await axios.post("http://77.105.136.213:6000/notif", {
+              error: error,
+            });
+          };
+          createError();
         }
       }
       res = null;
@@ -111,14 +105,14 @@ try {
       });
     });
 
-    socket.on('free message', async (message) => {
+    socket.on("free message", async (message) => {
       console.log(message);
 
       messages_arr.push({ role: "user", content: message });
 
       let isFinished: boolean = res?.data?.choices[0]?.finish_reason === "stop";
-
-      for(let i = 0; i < 10; i++) {
+      let count = 1;
+      for (let i = 0; i < 10; i++) {
         try {
           res = await openai_key_1.createChatCompletion({
             model: "gpt-3.5-turbo-16k",
@@ -130,13 +124,13 @@ try {
           isFinished = res?.data?.choices[0]?.finish_reason === "stop";
 
           if (answer.match(/^[a-zA-Zа-яА-Я]/)) {
-                answer = ` ${answer}`;
-              }
-              // console.log(answer.length);
-
-          if (i == 1) {
-                isFinished = true
-              }
+            answer = ` ${answer}`;
+          }
+          if (/[а-яА-ЯЁёЪъ]/.test(answer)) count = 3;
+          // console.log(answer.length, count);
+          if (i === count) {
+            isFinished = true;
+          }
 
           socket.emit("free message", {
             message: answer,
@@ -148,16 +142,18 @@ try {
             role: "assistant",
           });
           if (isFinished) break;
-
         } catch (error) {
+          console.log(error);
 
-          console.log(error)
-
-          const createError = async ( ) => {
-            await axios.post('http://77.105.136.213:5000/data/send_error', {data: error})
-            await axios.post('http://77.105.136.213:6000/notif', {error: error})
-          }
-          createError()
+          const createError = async () => {
+            await axios.post("http://77.105.136.213:5000/data/send_error", {
+              data: error,
+            });
+            await axios.post("http://77.105.136.213:6000/notif", {
+              error: error,
+            });
+          };
+          createError();
         }
       }
       res = null;
@@ -165,18 +161,16 @@ try {
       socket.on("disconnect", () => {
         console.log("Client disconnected");
       });
-    })
-
-
+    });
   });
 } catch (error) {
   console.log(error);
 
-  const createError = async ( ) => {
-    await axios.post('http://77.105.136.213:5000/data/send_error', {data: error})
-    await axios.post('http://77.105.136.213:6000/notif', {error: error})
-  }
-  createError()
-
-
+  const createError = async () => {
+    await axios.post("http://77.105.136.213:5000/data/send_error", {
+      data: error,
+    });
+    await axios.post("http://77.105.136.213:6000/notif", { error: error });
+  };
+  createError();
 }
