@@ -111,13 +111,15 @@ try {
       messages_arr.push({ role: "user", content: message });
 
       let isFinished: boolean = res?.data?.choices[0]?.finish_reason === "stop";
-      let count = 1;
-      for (let i = 0; i < 10; i++) {
+      let i = 0;
+      let tokens = 55;
+      if (/[а-яА-ЯЁёЪъ]/.test(message)) tokens = 125;  
+      while ((res === null || !isFinished) && i < 2) {
         try {
           res = await openai_key_1.createChatCompletion({
             model: "gpt-3.5-turbo-16k",
             messages: [{ role: "user", content: message }, ...messages_arr],
-            max_tokens: 50,
+            max_tokens: tokens,
           });
 
           let answer: any = res.data.choices[0].message.content;
@@ -125,9 +127,7 @@ try {
 
           if (answer.match(/^[a-zA-Zа-яА-Я]/) && !/[а-яА-ЯЁёЪъ]/.test(answer)) answer = ` ${answer}`;
     
-          if (/[а-яА-ЯЁёЪъ]/.test(answer)) count = 4;
-          // console.log(answer.length, count);
-          if (i === count) isFinished = true;
+          // console.log(answer.length, i, answer);
 
           socket.emit("free message", {
             message: answer,
@@ -138,7 +138,6 @@ try {
             content: answer,
             role: "assistant",
           });
-          if (isFinished) break;
         } catch (error) {
           console.log(error);
 
@@ -152,8 +151,8 @@ try {
           };
           createError();
         }
+        i++;
       }
-      // console.log(messages_arr);
       
       res = null;
 
