@@ -114,7 +114,8 @@ try {
       let i = 0;
       let tokens = 55;
       if (/[а-яА-ЯЁёЪъ]/.test(message)) tokens = 125;  
-      while ((res === null || !isFinished) && i < 2) {
+      while (res === null || !isFinished) {
+
         try {
           res = await openai_key_1.createChatCompletion({
             model: "gpt-3.5-turbo-16k",
@@ -126,7 +127,7 @@ try {
           isFinished = res?.data?.choices[0]?.finish_reason === "stop";
 
           if (answer.match(/^[a-zA-Zа-яА-Я]/) && !/[а-яА-ЯЁёЪъ]/.test(answer)) answer = ` ${answer}`;
-    
+          if (i === 1) isFinished = true;
           // console.log(answer.length, i, answer);
 
           socket.emit("free message", {
